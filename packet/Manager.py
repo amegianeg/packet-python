@@ -31,16 +31,17 @@ class Manager(BaseAPI):
             devices.append(device)
         return devices
 
-    def create_device(self, project, hostname, plan, facility, operating_system, billing_cycle="hourly", user_data=""):
-        params = {'hostname': hostname,
-                  'project_id': project,
-                  'plan': plan,
-                  'facility': facility,
-                  'operating_system': operating_system,
-                  'billing_cycle': billing_cycle,
-                  'user_data': user_data,
-                 }
-        data = super(Manager, self).call_api('projects/%s/devices' % project, type='POST', params=params)
+    def create_device(self, project_id, hostname, plan, facility, operating_system, billing_cycle="hourly", **kwargs):
+        params = {
+            'hostname': hostname,
+            'plan': plan,
+            'facility': facility,
+            'operating_system': operating_system,
+            'billing_cycle': billing_cycle,
+        }
+        if kwargs:
+            params.update(kwargs)
+        data = super(Manager, self).call_api('projects/%s/devices' % project_id, type='POST', params=params)
         return Device(data, self.auth_token, self.consumer_token)
 
     def get_device(self, device_id):
